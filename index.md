@@ -10,8 +10,8 @@ own examples    | discourse example collection
 --------------- | ---------------------------- 
 [threejs.hofk.de](https://threejs.hofk.de) | [discourse.threejs.hofk.de](http://discourse.threejs.hofk.de) 
 
-### HC680 simulation ###
+### Simulation HC680 Processor ###
 
-Simulation (de)
+CPU Simulation (de)
 ----------------- | 
-[cpusimulation] (https://hofk.github.io/cpusimulation/) |
+hofk.github.io/cpusimulation/ |
