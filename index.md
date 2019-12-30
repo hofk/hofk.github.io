@@ -14,4 +14,4 @@ own examples    | discourse example collection
 
 CPU Simulation (de) |
 ----------------- |  
-https://hofk.github.io/cpusimulation/ |  
+[hofk.github.io/cpusimulation/](https://hofk.github.io/cpusimulation/) |  
