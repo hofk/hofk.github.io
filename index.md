@@ -12,6 +12,6 @@ own examples    | discourse example collection
 
 ### Simulation HC680 Processor ###
 
-CPU Simulation (de)
------------------ | 
-hofk.github.io/cpusimulation/ |
+CPU Simulation (de) |
+----------------- |  
+https://hofk.github.io/cpusimulation/ |  
