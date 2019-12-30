@@ -9,7 +9,7 @@
 own examples    | discourse example collection 
 --------------- | ---------------------------- 
 [threejs.hofk.de](https://threejs.hofk.de) | [discourse.threejs.hofk.de](http://discourse.threejs.hofk.de) 
-![threejs.hofk](threejs.hofk.de.png) |
+![threejs.hofk](threejs.hofk.de.png) | ![collection](collection.png)
 
 
 ---
