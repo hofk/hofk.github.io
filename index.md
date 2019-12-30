@@ -19,7 +19,7 @@ own examples    | discourse example collection
 CPU Simulation (de) | Sourcecode
 ------------------- | ------------------  
 [hofk.github.io/cpusimulation/](https://hofk.github.io/cpusimulation/) |  [sourcecode/](https://hofk.github.io/cpusimulation/sourcecode)
-![kopf](2_Kopf.jpg) | [zip](https://hofk.github.io/cpusimulation/sourcecode/HC680_assembler.zip)
+![kopf](2_Kopf.jpg) | [zip file](https://hofk.github.io/cpusimulation/sourcecode/HC680_assembler.zip)
 
 Windows 
 
