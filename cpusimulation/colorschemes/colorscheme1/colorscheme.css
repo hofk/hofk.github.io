@@ -1,0 +1,88 @@
+/*----------------------------------------------------------------------------
+	colorscheme1.css for colorscheme 1 - gold
+
+	this css-file contains all definitions, that depend on the colorscheme.
+
+	(c) Schlund + Partner AG
+----------------------------------------------------------------------------*/
+
+
+/*-- main container --------------------------------------------------------*/
+
+#container {
+	background : url(images/static/contentbg.gif) repeat-y;
+}
+
+/*--- header ---------------------------------------------------------------*/
+#header	{
+	background : url(images/static/headerbg.gif) no-repeat;
+}
+
+/*--- footer ---------------------------------------------------------------*/
+
+#footer {
+	background : url(images/static/contentbg.gif) repeat-y;
+}
+
+/*----------------------------------------------------------------------------
+  default-styles for html-elements
+----------------------------------------------------------------------------*/
+
+/*--- body -----------------------------------------------------------------*/
+
+body#main_body {
+	color: #33270E;
+	background : #988A60 url(images/static/pgbk.gif) repeat-x;
+}
+
+/*--- tables ---------------------------------------------------------------*/
+
+.content table {
+	border-color: #ffffff;
+}
+
+.content th {
+	color: #ffffff;
+	background-color:#33270E;
+}
+
+.content tr.odd {
+	color: #33270E;
+	background-color:#CFC195;
+}
+
+.content tr.even {
+	color: #33270E;
+	background-color:#CFC195;
+}
+
+/*--- forms ----------------------------------------------------------------*/
+
+.content fieldset {
+	border-color: #33270D;
+}
+
+.content legend{
+	color: #33270D;
+}
+
+.content label {
+	color: #33270D;
+}
+
+.content input {
+	border-color: #33270D;
+	background-color: #CFC195;
+}
+
+.content textarea {
+	border-color: #33270D;
+	background-color: #CFC195;
+}
+
+.content button {
+	background-color:#33270E;
+	border: 1px solid #5F5334;
+}
+
+/*--------------------------------------------------------------------------*/
