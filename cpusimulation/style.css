@@ -1,0 +1,100 @@
+
+div#logo a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+#footer_text a {
+  font-family: Verdana,sans-serif;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: bold;
+  color: #C3BAA2;
+  text-decoration: underline; white-space: nowrap;
+}
+
+    
+#key_visual {
+   background: url(resources/2_Kopf.jpg) no-repeat;
+}
+#slogan {
+  font-family: Verdana,sans-serif;
+  font-style: normal;
+  font-size: 22px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #C3BAA2;
+}
+#content_container h1 {
+  font-family: Arial,sans-serif;
+  font-style: normal;
+  font-size: 26px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+}
+#content_container h2 {
+  font-family: Arial,sans-serif;
+  font-style: normal;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+}
+#content_container h3 {
+  font-family: Arial,sans-serif;
+  font-style: normal;
+  font-size: 22px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+}
+#content_container, #content_container p {
+  font-family: Arial,sans-serif;
+  font-style: normal;
+  font-size: 20px;
+  font-weight: normal;
+  text-decoration: none;
+  color: #000000;
+}
+#content_container a:visited {
+  font-family: Times New Roman, Times, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: underline;
+  color: #33270D;
+}
+#content_container a:link {
+  font-family: Times New Roman, Times, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: underline;
+  color: #33270D;
+}
+#content_container a:hover {
+  font-family: Times New Roman, Times, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: none;
+  color: #33270D;
+}
+#content_container a:active {
+  font-family: Times New Roman, Times, serif;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: underline;
+  color: #33270D;
+}
+#footer_text {
+  font-family: Verdana,sans-serif;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #C3BAA2;
+}
+
