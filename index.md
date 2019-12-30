@@ -20,3 +20,7 @@ CPU Simulation (de) | Sourcecode
 [hofk.github.io/cpusimulation/](https://hofk.github.io/cpusimulation/) |  [sourcecode/](https://hofk.github.io/cpusimulation/sourcecode)
 ![kopf](2_Kopf.jpg) |
 
+Win 
+
+![HC680](HC680.png)
+
