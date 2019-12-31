@@ -8,7 +8,8 @@
 
 own examples    | discourse example collection 
 --------------- | ---------------------------- 
-[threejs.hofk.de](https://threejs.hofk.de) | [discourse.threejs.hofk.de](http://discourse.threejs.hofk.de) 
+[threejs.hofk.de](https://threejs.hofk.de) | [discourse.threejs.hofk.de](http://discourse.threejs.hofk.de)
+ . | see [discourse.threejs.org](https://discourse.threejs.org/t/collection-of-examples-from-discourse-threejs-org/4315)
 ![threejs.hofk](threejs.hofk.de.png) | ![collection](collection.png)
 
 
