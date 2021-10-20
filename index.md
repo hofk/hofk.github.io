@@ -18,12 +18,6 @@ own examples    | discourse example collection
 ### Simulation HC680 Processor ###
 
 in progress !
-
-CPU Simulation      |                    |                    |     
-------------------- | ------------------ | ------------------ |
-![topEN] (topEN.png)                 |                    |                    |
-![topDE] (topDE.png)                 |                    |                    | 
-  
-
+ 
 ...
  
