@@ -1,0 +1,7 @@
+HC680 Assembler    ;test DIV
+00: ST             ; start addr.
+Adr Mnm _Op_ _Op_  ;  - comment -
+00: INP .D0.       ;
+01: INP .D1.       ;
+02: DIV            ;
+03: STP            ;

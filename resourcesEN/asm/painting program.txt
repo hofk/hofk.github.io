@@ -1,0 +1,38 @@
+HC680 Assembler    ;painting program - click
+00: ST             ; startaddress
+Adr Mnm _Op_ _Op_  ;  - comment -
+00: LDC .D0.       ;mask for click bit in pixel byte
+01: ##  0000 1000  ;
+02: SSR .D0.       ;mask for click bit to SD0 for test
+03: LDC .D1.       ;mask pixel bit in pixel byte
+04: ##  1000 0000  ;
+05: LDC .A1.       ;address pixel byte = mask set click bit 0
+06: ##  1111 0111  ;
+07: MOV [A1] .A0.  ;initialize pixel byte (set to zero)
+08: LDC .A0.       ;jump address for click
+09: ##  0001 0010  ;
+0A: SSR .A0.       ;memorize jump address for click
+0B: GSR .A0.       ;<-- jump target main and click loop; get jump adr. for click
+0C: MOV .D0. [A1]  ;pixel byte to D0
+0D: BTS .D0.       ;test against SD0 whether click bit is set
+0E: JIZ .A0.       ;jump out of loop if click bit 
+0F: LDC .A0.       ;address return click loop
+10: ##  0000 1011  ;
+11: JMP .A0.       ;back jump click loop
+12: LDC .A0.       ;<-- jump target at click bit,  load: set jump target pixel
+13: ##  0001 1100  ;
+14: NOT .D0.       ;negative flag to distinguish: pixel is 1=black/0=white
+15: JIN .A0.       ;jump to: set pixel
+16: NOT .D0.       ;--- delete pixel:  NOT undo
+17: SHL .D0.       ;shift out bit black
+18: SHR .D0.       ;bit 0=white, shift in again
+19: LDC .A0.       ;address jump target: set skip pixel
+1A: ##  0001 1110  ;
+1B: JMP .A0.       ;set skip pixel
+1C: NOT .D0.       ;<-- set jump target pixel, undo NOT
+1D: OR  .D0. .D1.  ;set pixel bit with mask
+1E: AND .D0. .A1.  ;<-- jump target: (set skip pixel), reset click bit
+1F: MOV [A1] .D0.  ;reset pixel byte from D0
+20: LDC .A0.       ;jumpback address main loop
+21: ##  0000 1011  ;
+22: JMP .A0.       ;back jump main loop

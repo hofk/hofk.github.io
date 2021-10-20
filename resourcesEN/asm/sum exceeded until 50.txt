@@ -1,0 +1,18 @@
+HC680 assembler    ; sum exceeded until 50
+00: ST             ; startaddress
+Adr Mnm _Op_ _Op_  ; - comment -
+00: MOV .SR. .01.  ;output decimal
+01: LOD .D1.       ;load target sum from h80
+02: INC .A1.       ;incrementing the address index register A1 to load the next constant
+03: LOD .A1.       ;load jump difference for IC relative jump in A1
+04: PSH .D0.       ;put initial value 0 on the stack for cumulating
+05: INP .A0.       ;-INPUT- data into address register - is possible!
+06: POP .D0.       ;get cumulated sum from stack
+07: ADD .D0. .A0.  ;sum with input value
+08: PSH .D0.       ;put sum back on stack
+09: CMP            ;compare sum with target sum (D0-D1 without result)
+0A: JIN .+A.       ;IC-relative jump to input, if target sum is not yet reached
+0B: OUT .D0.       ;-OUTPUT-
+0C: STP            ;done!
+80: 50   h32       ;sum up to 50
+81: -5   hFB       ;IC-relative destination address (five commands back)

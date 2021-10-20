@@ -1,0 +1,259 @@
+HC680 Assembler    ;GUI calculator
+00: ST             ; startaddress
+Adr Mnm _Op_ _Op_  ;  - comment -
+00: NOP            ;xxx - reserved to store the current digit!
+01: MOV .SR. .01.  ;decimal output: IO = 01
+02: PSH .D0.       ;set stack pointer (zero as initial sum)
+03: LDC .D0.       ;ANSI digit 0 = 48 = h30 load
+04: ##  0011 0000  ;
+05: SSR .D0.       ;ANSI digit 0 remember
+06: LDC .D1.       ;ANSI digit 9 = 57 = h39 load
+07: ##  0011 1001  ;
+08: SSR .D1.       ;ANSI  digit 9 remember
+09: LDC .A0.       ;Load address: h90 = start address digit representation
+0A: ##  1001 0000  ;
+0B: SSR .A0.       ;remember start address digit representation
+0C: LDC .A1.       ;load address keyboard buffer
+0D: ##  1111 0110  ;
+0E: SSR .A1.       ;remember keyboard buffer address
+0F: GSR .A1.       ;<--: jump target h0F event loop, get address keyboard buffer
+10: MOV .A0. [A1]  ;get keyboard buffer content
+11: GSR .D0.       ;to digit 0 - fetch ANSI
+12: GSR .D1.       ;to digit 9 - fetch ANSI
+13: LDC .A1.       ;load 16 byte jump difference
+14: ##  0001 0000  ;
+15: SUB .D1. .A0.  ;difference: ANSI from 9 to keypad buffer
+16: JIN .+A.       ;+16 byte jump if character after digit 9
+17: SUB .A0. .D0.  ;digit value = difference keyboard buffer to ANSI of 0
+18: JIN .+A.       ;+16 byte jump if character before digit 0
+19: CLR .D0.       ;RAM byte 0 as address  ...
+1A: MOV [D0] .A0.  ;... to store the current digit
+1B: LDC .D0.       ;load difference digit representation in RAM 5 bytes
+1C: ##  0000 0101  ;
+1D: MOV .D1. .A0.  ;bring digit value to D1 (for multiplication)
+1E: MUL            ;then in D0: offset = 5 * digit value
+1F: GSR .A0.       ;get start address digit representation
+20: ADD .A0. .D0.  ;address representation of the current digit
+21: LDC .D0.       ;load count for copy command: 5 bytes are to be copied
+22: ##  0000 0101  ;
+23: LDC .A1.       ;target address hF8 MGA display row 1 
+24: ##  1111 1000  ;
+25: CPY            ;copy digit representation to MGA RAM
+26: NOP            ;<--: Jump target for ANSI character before digit 9
+27: NOP            ;NOP important: distance 2 for jump commands!
+28: NOP            ;<--: jump target for character ANSI after digit 0
+29: LDC .A1.       ;address display pixel hF7
+2A: ##  1111 0111  ;
+2B: MOV .D1. [A1]  ;get content display pixel
+2C: LDC .D0.       ;load mask: display pixel without click bit
+2D: ##  1111 0111  ;
+2E: AND .D0. .D1.  ;delete click bit in D0
+2F: MOV [A1] .D0.  ;write back display pixel
+30: LDC .A0.       ;load mask for click bit
+31: ##  0000 1000  ;
+32: LDC .A1.       ;load jump target h66
+33: ##  0110 0110  ;
+34: AND .A0. .D1.  ;A0 becomes 0 if click bit not set ...
+35: JIZ .A1.       ;... then jump to h66
+36: LDC .A0.       ;load delimitation line 4
+37: ##  0000 0100  ;
+38: LDC .D0.       ;mask for line of the MGA
+39: ##  0111 0000  ;
+3A: AND .D0. .D1.  ;line in the left nibble of D0
+3B: SWN .D0.       ;swap: line number in D0
+3C: LDC .A1.       ;load jump difference 13
+3D: ##  0000 1101  ;
+3E: SUB .A0. .D0.  ;calculate line position
+3F: JIN .+A.       ;jump 13 byte: - or + symbol clicked
+40: LDC .A0.       ;load delimitation column 4
+41: ##  0000 0100  ;
+42: LDC .D0.       ;mask for column of the MGA
+43: ##  0000 0111  ;
+44: AND .D0. .D1.  ;column number in D0
+45: LDC .A1.       ;Load jump target h66
+46: ##  0110 0110  ;
+47: SUB .D0. .A0.  ;calculate column position
+48: JIN .A1.       ;jump to h66 no symbol
+49: POP .D1.       ;<--: = handle, get previous sum
+4A: OUT .D1.       ;output sum
+4B: STP            ;-------- PROGRAM END --------
+4C: LDC .A0.       ;<--: jump target - + symbol, load delimitation column 4
+4D: ##  0000 0100  ;
+4E: LDC .D0.       ;mask for column MGA
+4F: ##  0000 0111  ;
+50: AND .D0. .D1.  ;column number in D0
+51: LDC .A1.       ;load jump difference 11
+52: ##  0000 1011  ;
+53: SUB .D0. .A0.  ;calculate column position
+54: JIN .+A.       ;jump 11 byte at - symbol
+55: CLR .D0.       ;<--: + handle, address 0 ...
+56: MOV .D0. [D0]  ;... get current digit
+57: POP .D1.       ;get sum so far
+58: ADD .D1. .D0.  ;add up digit
+59: PSH .D1.       ;remember sum
+5A: OUT .D0.       ;output digit
+5B: OUT .D1.       ;output subtotal
+5C: LDC .A1.       ;load jump target h66
+5D: ##  0110 0110  ;
+5E: JMP .A1.       ;jump over
+5F: CLR .D0.       ;<--: - handle, address 0 ...
+60: MOV .D0. [D0]  ;... get current digit
+61: POP .D1.       ;get sum so far
+62: SUB .D1. .D0.  ;subtract digit
+63: PSH .D1.       ;remember sum
+64: OUT .D0.       ;output digit
+65: OUT .D1.       ;output subtotal
+66: NOP            ;<-- jump target h66 - end of event loop
+67: LDC .A0.       ;load jump target h0F: start of event loop
+68: ##  0000 1111  ;
+69: JMP .A0.       ;event loop return
+6A: NOP            ;
+6B: NOP            ;
+6C: NOP            ;
+6D: NOP            ;
+6E: NOP            ;
+6F: NOP            ;
+70: NOP            ;
+71: NOP            ;
+72: NOP            ;
+73: NOP            ;
+74: NOP            ;
+75: NOP            ;
+76: NOP            ;
+77: NOP            ;
+78: NOP            ;
+79: NOP            ;
+7A: NOP            ;
+7B: NOP            ;
+7C: NOP            ;
+7D: NOP            ;
+7E: NOP            ;
+7F: NOP            ;
+80: 0    h00       ;
+81: 0    h00       ;
+82: 0    h00       ;
+83: 0    h00       ;
+84: 0    h00       ;
+85: 0    h00       ;
+86: 0    h00       ;
+87: 0    h00       ;
+88: 0    h00       ;
+89: 0    h00       ;
+8A: 0    h00       ;
+8B: 0    h00       ;
+8C: 0    h00       ;
+8D: 0    h00       ;
+8E: 0    h00       ;
+8F: 0    h00       ;
+90: -32  hE0       ;representation digit 0 with = character line 1
+91: -89  hA7       ;line 2
+92: -96  hA0       ;line 3
+93: -89  hA7       ;line 4
+94: -32  hE0       ;line 5
+95: 32   h20       ;representation digit 1 with = sign
+96: 103  h67       ;
+97: 32   h20       ;
+98: 39   h27       ;
+99: 32   h20       ;
+9A: -32  hE0       ;representation digit 2 with = sign
+9B: 39   h27       ;
+9C: -32  hE0       ;
+9D: -121 h87       ;
+9E: -32  hE0       ;
+9F: -32  hE0       ;representation digit 3 with = sign
+A0: 39   h27       ;
+A1: -32  hE0       ;
+A2: 39   h27       ;
+A3: -32  hE0       ;
+A4: -96  hA0       ;representation digit 4 with = sign
+A5: -89  hA7       ;
+A6: -32  hE0       ;
+A7: 39   h27       ;
+A8: 32   h20       ;
+A9: -32  hE0       ;representation digit 5 with = sign
+AA: -121 h87       ;
+AB: -32  hE0       ;
+AC: 39   h27       ;
+AD: -32  hE0       ;
+AE: -32  hE0       ;representation digit 6 with = sign
+AF: -121 h87       ;
+B0: -32  hE0       ;
+B1: -89  hA7       ;
+B2: -32  hE0       ;
+B3: -32  hE0       ;representation digit 7 with = sign
+B4: 39   h27       ;
+B5: 32   h20       ;
+B6: 39   h27       ;
+B7: 32   h20       ;
+B8: -32  hE0       ;representation digit 8 with = sign
+B9: -89  hA7       ;
+BA: -32  hE0       ;
+BB: -89  hA7       ;
+BC: -32  hE0       ;
+BD: -32  hE0       ;representation digit 9 with = sign
+BE: -89  hA7       ;
+BF: -32  hE0       ;
+C0: 39   h27       ;
+C1: -32  hE0       ;
+C2: 0    h00       ;---------------
+C3: 0    h00       ;
+C4: 0    h00       ;
+C5: 0    h00       ;
+C6: 0    h00       ;
+C7: 0    h00       ;
+C8: 0    h00       ;
+C9: 0    h00       ;
+CA: 0    h00       ;
+CB: 0    h00       ;
+CC: 0    h00       ;
+CD: 0    h00       ;
+CE: 0    h00       ;
+CF: 0    h00       ;
+D0: 0    h00       ;
+D1: 0    h00       ;
+D2: 0    h00       ;
+D3: 0    h00       ;
+D4: 0    h00       ;
+D5: 0    h00       ;
+D6: 0    h00       ;
+D7: 0    h00       ;
+D8: 0    h00       ;
+D9: 0    h00       ;
+DA: 0    h00       ;
+DB: 0    h00       ;
+DC: 0    h00       ;
+DD: 0    h00       ;
+DE: 0    h00       ;
+DF: 0    h00       ;
+E0: 0    h00       ;
+E1: 0    h00       ;
+E2: 0    h00       ;
+E3: 0    h00       ;
+E4: 0    h00       ;
+E5: 0    h00       ;
+E6: 0    h00       ;
+E7: 0    h00       ;
+E8: 0    h00       ;
+E9: 0    h00       ;
+EA: 0    h00       ;
+EB: 0    h00       ;
+EC: 0    h00       ;
+ED: 0    h00       ;
+EE: 0    h00       ;
+EF: 0    h00       ;
+F0: 0    h00       ;
+F1: 0    h00       ;
+F2: 0    h00       ;
+F3: 0    h00       ;
+F4: 0    h00       ;
+F5: 0    h00       ;
+F6: 0    h00       ;
+F7: 0    h00       ;
+F8: -32  hE0       ;
+F9: -89  hA7       ;
+FA: -96  hA0       ;
+FB: -89  hA7       ;
+FC: -32  hE0       ;
+FD: 2    h02       ;
+FE: -25  hE7       ;
+FF: 2    h02       ;

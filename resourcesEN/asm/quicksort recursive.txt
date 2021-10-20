@@ -1,0 +1,100 @@
+HC680 Assembler    ; quicksort recursive 
+00: ST             ; startaddress
+Adr Mnm _Op_ _Op_  ; - comment -
+00: MOV .SR. .01.  ;IO = 01 : decimal numbers in file to be sorted/sorted
+01  INC .A1.       :index for RCL to 1
+02: RCL            ;read in data for sorting, store from addr. h81, count in D0
+03: PSH .D0.       ;remember count
+04: LDC .D1.       ;load h80 (address before sort data area) ...
+05: ##  1000 0000  ;
+06: ADD .D1. .D0.  ; ... + number read = end address sort data (below, parameter)
+07: LDC .D0.       ;load h81 = start address sort data (above, parameter)
+08: ##  1000 0001  ;
+09: LDC .A0.       ;addr. 17 = h11 for call sub quicksort bring to A0
+0A: ##  0001 0001  ;
+0B: JSR            ;jump to the subroutine quicksort
+0C: POP .D0.       ;get count data
+0D: CLR .A1.       ;index for STO ...            
+0E: INC .A1.       ;... bring to 1 (sorted data from h81 in RAM)
+0F: STO            ;write sorted data into file
+10: STP            ;----- stop main program -----
+11: NOP            ;<start sub quicksort> / pivot element is at the bottom
+12: LDC .A1.       ;load jump difference dec 71 <= one-element area
+13: ##  0100 0111  ;
+14: MOV .A0. .D1.  ;addr. store lower element for comparison
+15: SUB .A0. .D0.  ;compare addresses top/bottom
+16: DEC .A0.       ;(A0)D1 = D0  take into account   (0 -> -1)
+17: JIN .+A.       ;--- jump if only one-element area
+18: PSH .D0.       ;remember addr. upper element
+19: MOV .A0. .D0.  ;upper addr. to address register (running pointer at top Zt)
+1A: DEC .A0.       ;addr. DEC, because in loop first INC before comparison
+1B: PSH .D1.       ;remember addr. bottom element
+1C: SSR .D1.       ;bring addr. running pointer bottom (Zb) into shadow register
+1D: MOV .D1. [D1]  ;load value lower pivot element (P)
+1E: PSH .D1.       ;remember value P
+1F: NOP            ;<-- jump target outer loop
+20: LDC .A1.       ;negative jump diff. dec -3 for loop load
+21: ##  1111 1101  ;=
+22: INC .A0.       ;<-- jump target - shift Adr. Zt further down
+23: MOV .D0. [A0]  ;load current upper value
+24: CMP            ;compare current value with P in D1
+25: JIN .+A.       ;loop until >= (misplacement)
+26: MOV .D0. .A0.  ;restore last address Zt
+27: SSR .D0.       ;remember Adr. Zt (misplacement)
+28: LDC .A1.       ;load new jump diff. dec -12
+29: ##  1111 0100  ;
+2A: GSR .D1.       ;get addr. Zb ...
+2B: MOV .A0. .D1.  ; ... into the address reg.
+2C: POP .D0.       ;<-- jump target - get value P to D0 (note: reverse comparison!) ...
+2D: PSH .D0.       ;... and remember again
+2E: DEC .A0.       ;shift addr Zb. further up
+2F: MOV .D1. [A0]  ;load lower value
+30: SUB .D0. .D1.  ;difference value to pivot element
+31: PSH .D0.       ;remember diff. (sign for comparison)
+32: MOV .D1. .A0.  ;bring addr. Zb to D1
+33: SSR .D1.       ;remember last addr.  Zb  
+34: GSR .D0.       ;get last addr. Zt
+35: SUB .D0. .D1.  ;difference pointer Zt - Zb
+36: POP .D1.       ;get difference value to pivot element
+37: AND .D0. .D1.  ; --- link loop condition --- sign only (one diff. positive )
+38: JIN .+A.       ;loop until <= value comparison (misplacement) or >= pointer comparison
+39: LDC .A1.       ;--- abort check outer loop, load jump diff. dec 12 for loop abort
+3A: ##  0000 1100  ;
+3B: GSR .D1.       ;get last addr. Zb  
+3C: GSR .D0.       ;get last addr. Zt 
+3D: SUB .D1. .D0.  ;difference pointer inverted Zb - Zt for abort decision
+3E: DEC .D1.       ;if negative: pointers (addresses) equal or overflow each other
+3F: JIN .+A.       ;-> abort outer loop
+40: NOP            ;--- exchange in case of misplacement
+41: GSR .D0.       ;get addr. Zt 
+42: GSR .D1.       ;get addr. Zb 
+43: SWM            ;exchange values in RAM: addr. D0 <-> addr D1 (Zt, Zb)
+44: MOV .A0. .D0.  ;Zt to AO
+45: POP .D1.       ;load value pivot element for comparison after return
+46: PSH .D1.       ;and remember value P again
+47: LDC .A1.       ;load return diff. dec -42 outer loop in A1
+48: ##  1101 0110  ;
+49: JMP .+A.       ;return to position: outer loop (continuation of comparisons)
+4A: NOP            ;---  end outer loop --- exchange separator:
+4B: GSR .D0.       ;get addr Zt  (placee for separator)
+4C: POP .D1.       ;value pivot el. clear from stack
+4D: POP .D1.       ;load addr. pivot el. below (then also as parameter)
+4E: SWM            ;exchange values in RAM: addr. D0 <-> addr. D1 ( Zt <-> pivot/separator element)
+4F: PSH .D1.       ;remember addr. below (parameter)
+50: PSH .D0.       ;remember addr. separator  
+51: INC .D0.       ;addr: separator + 1  (parameter)
+52: LDC .A0.       ;address dec 17 = h11 for recursion quicksort load
+53: ##  0001 0001  ;
+54: CLR .A1.       ;no further index for call
+55: JSR            ;---> recursive call quicksort (first right)
+56: POP .D1.       ; load  addr. separator  
+57: DEC .D1.       ;addr. separ. - 1 (parameter)
+58: POP .D0.       ;load addr. bottom -discard
+59: POP .D0.       ;load addr. top (parameter) -> stack cleared!
+5A: LDC .A0.       ;address dec 17 = h11 for recursion quicksort load
+5B: ##  0001 0001  ;
+5C: CLR .A1.       ;no further index for call
+5D: JSR            ;---> recursive call quicksort (now left)
+5E: RET            ;-----> return from sub quicksort
+5F: NOP            ;
+60: NOP            ;
