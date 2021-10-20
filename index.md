@@ -19,10 +19,10 @@ own examples    | discourse example collection
 
 in progress !
 
-CPU Simulation      |  DE                |  EN
-------------------- | ------------------ |  
-1                   |                    |
-2                   |                    |                  
+CPU Simulation      |  DE                |  EN                |     
+------------------- | ------------------ | ------------------ |
+1                   |                    |                    |
+2                   |                    |                    |                  
  
 
 ...
