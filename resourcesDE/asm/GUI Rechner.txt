@@ -1,0 +1,259 @@
+HC680 Assembler    ;GUI Rechner
+00: ST             ; Startadr.
+Adr Mnm _Op_ _Op_  ;  - Kommentar -
+00: NOP            ;xxx - reserviert zur Ablage der aktuellen Ziffer!
+01: MOV .SR. .01.  ;dezimale Ausgabe: IO = 01
+02: PSH .D0.       ;Stackpointer setzen (Null als Anfangssumme)
+03: LDC .D0.       ;ANSI Ziffer 0 = 48 = h30 laden
+04: ##  0011 0000  ;
+05: SSR .D0.       ;ANSI Ziffer 0 merken
+06: LDC .D1.       ;ANSI Ziffer 9 = 57 = h39 laden
+07: ##  0011 1001  ;
+08: SSR .D1.       ;ANSI Ziffer 9 merken
+09: LDC .A0.       ;Lade Adresse: h90 = Anfangsadresse Zifferndarst.
+0A: ##  1001 0000  ;
+0B: SSR .A0.       ;Anfangsadr. Zifferndarst. merken
+0C: LDC .A1.       ;Lade Adresse Tastaturpuffer
+0D: ##  1111 0110  ;
+0E: SSR .A1.       ;Adresse Tastaturpuffer merken
+0F: GSR .A1.       ;<--: Sprungziel h0F Ereignisschleife, Adresse Tastaturpuffer holen
+10: MOV .A0. [A1]  ;Inhalt Tastaturpuffer holen
+11: GSR .D0.       ;zu Ziffer 0 ANSI holen
+12: GSR .D1.       ;zu Ziffer 9 ANSI holen
+13: LDC .A1.       ;16 Byte Sprungdifferenz laden
+14: ##  0001 0000  ;
+15: SUB .D1. .A0.  ;Diff. ANSI von 9 zu Tastaturpuffer
+16: JIN .+A.       ;+16 Byte Sprung wenn Zeichen nach Ziffer 9
+17: SUB .A0. .D0.  ;Ziffernwert = Diff. Tastaturpuffer zu ANSI von 0
+18: JIN .+A.       ;+16 Byte Sprung wenn Zeichen vor Ziffer 0
+19: CLR .D0.       ;RAM-Byte 0 als Adresse ...
+1A: MOV [D0] .A0.  ;... zur Ablage der aktuellen Ziffer
+1B: LDC .D0.       ;Lade Differenz Zifferndarst. im RAM 5 Byte
+1C: ##  0000 0101  ;
+1D: MOV .D1. .A0.  ;Ziffernwert nach D1 bringen (für Multiplikation)
+1E: MUL            ;dann in  D0:  Offset = 5 * Ziffernwert
+1F: GSR .A0.       ;Anfangsadr. Zifferndarstellung holen
+20: ADD .A0. .D0.  ;Adresse Darstellung der aktuellen Ziffer
+21: LDC .D0.       ;Lade Anzahl für Kopierbefehl: 5 Byte sind zu kopieren
+22: ##  0000 0101  ;
+23: LDC .A1.       ;Ziel-Adresse hF8 MGA-Display row 1 
+24: ##  1111 1000  ;
+25: CPY            ;Zifferndarstellung in MGA-RAM kopieren
+26: NOP            ;<--: Sprungziel bei Zeichen ANSI vor Ziffer 9
+27: NOP            ;NOP wichtig: Abstand 2 bei Sprungbefehlen!
+28: NOP            ;<--: Sprungziel bei Zeichen ANSI nach Ziffer 0
+29: LDC .A1.       ;Adr. Display-Pixel hF7
+2A: ##  1111 0111  ;
+2B: MOV .D1. [A1]  ;Inhalt Display-Pixel holen
+2C: LDC .D0.       ;lade Maske: Display-Pixel ohne Klick-Bit
+2D: ##  1111 0111  ;
+2E: AND .D0. .D1.  ;Klick-Bit in D0 löschen
+2F: MOV [A1] .D0.  ;Display-Pixel zurückschreiben
+30: LDC .A0.       ;lade Maske für Klick-Bit
+31: ##  0000 1000  ;
+32: LDC .A1.       ;lade Sprungziel h66
+33: ##  0110 0110  ;
+34: AND .A0. .D1.  ;A0 wird 0 wenn Klick-Bit nicht gesetzt ...
+35: JIZ .A1.       ;... dann nach h66 springen
+36: LDC .A0.       ;Abgrenzungszeile 4 laden
+37: ##  0000 0100  ;
+38: LDC .D0.       ;Maske für Zeile des MGA
+39: ##  0111 0000  ;
+3A: AND .D0. .D1.  ;Zeile im linken Nibble von D0
+3B: SWN .D0.       ;Tausch: Zeilennummer in D0
+3C: LDC .A1.       ;Sprungdifferenz 13 laden
+3D: ##  0000 1101  ;
+3E: SUB .A0. .D0.  ;Zeilenlage errechnen
+3F: JIN .+A.       ;springen 13 Byte: - oder + Symbol geklickt
+40: LDC .A0.       ;Abgrenzungsspalte 4 laden
+41: ##  0000 0100  ;
+42: LDC .D0.       ;Maske für Spalte des MGA
+43: ##  0000 0111  ;
+44: AND .D0. .D1.  ;Spaltennummer in D0
+45: LDC .A1.       ;Sprungziel h66 laden
+46: ##  0110 0110  ;
+47: SUB .D0. .A0.  ;Spaltenlage errechnen
+48: JIN .A1.       ;springen nach h66 kein Symbol
+49: POP .D1.       ;<--: = behandeln, bisherige Summe holen
+4A: OUT .D1.       ;Summe ausgeben
+4B: STP            ;-------- PROGRAMMENDE --------
+4C: LDC .A0.       ;<--: Sprungziel -  + Symbol, Abgrenzungsspalte 4 laden
+4D: ##  0000 0100  ;
+4E: LDC .D0.       ;Maske für Spalte MGA
+4F: ##  0000 0111  ;
+50: AND .D0. .D1.  ;Spaltennummer in D0
+51: LDC .A1.       ;Sprungdifferenz 11 laden
+52: ##  0000 1011  ;
+53: SUB .D0. .A0.  ;Spaltenlage errechnen
+54: JIN .+A.       ;springen 11 Byte bei - Symbol
+55: CLR .D0.       ;<--: + behandeln, Adresse 0 ...
+56: MOV .D0. [D0]  ;... aktuelle Ziffer holen
+57: POP .D1.       ;bisherige Summe holen
+58: ADD .D1. .D0.  ;Ziffer aufaddieren
+59: PSH .D1.       ;Summe merken
+5A: OUT .D0.       ;Ziffer ausgeben
+5B: OUT .D1.       ;Zwischensumme ausgeben
+5C: LDC .A1.       ;Sprungziel h66 laden
+5D: ##  0110 0110  ;
+5E: JMP .A1.       ;überspringen
+5F: CLR .D0.       ;<--: - behandeln,  Adresse 0 ...
+60: MOV .D0. [D0]  ;... aktuelle Ziffer holen
+61: POP .D1.       ;bisherige Summe holen
+62: SUB .D1. .D0.  ;Ziffer abziehen
+63: PSH .D1.       ;Summe merken
+64: OUT .D0.       ;Ziffer ausgeben
+65: OUT .D1.       ;Zwischensumme ausgeben
+66: NOP            ;<-- Sprungziel h66 - Ende der Ereignisschleife
+67: LDC .A0.       ;lade Sprungziel h0F: Anfang der Ereignisschleife
+68: ##  0000 1111  ;
+69: JMP .A0.       ;Rücksprung Ereignisschleife
+6A: NOP            ;
+6B: NOP            ;
+6C: NOP            ;
+6D: NOP            ;
+6E: NOP            ;
+6F: NOP            ;
+70: NOP            ;
+71: NOP            ;
+72: NOP            ;
+73: NOP            ;
+74: NOP            ;
+75: NOP            ;
+76: NOP            ;
+77: NOP            ;
+78: NOP            ;
+79: NOP            ;
+7A: NOP            ;
+7B: NOP            ;
+7C: NOP            ;
+7D: NOP            ;
+7E: NOP            ;
+7F: NOP            ;
+80: 0    h00       ;
+81: 0    h00       ;
+82: 0    h00       ;
+83: 0    h00       ;
+84: 0    h00       ;
+85: 0    h00       ;
+86: 0    h00       ;
+87: 0    h00       ;
+88: 0    h00       ;
+89: 0    h00       ;
+8A: 0    h00       ;
+8B: 0    h00       ;
+8C: 0    h00       ;
+8D: 0    h00       ;
+8E: 0    h00       ;
+8F: 0    h00       ;
+90: -32  hE0       ;Darstellung Ziffer 0 mit = Zeichen Zeile 1
+91: -89  hA7       ;Zeile 2
+92: -96  hA0       ;Zeile 3
+93: -89  hA7       ;Zeile 4
+94: -32  hE0       ;Zeile 5
+95: 32   h20       ;Darstellung Ziffer 1 mit = Zeichen
+96: 103  h67       ;
+97: 32   h20       ;
+98: 39   h27       ;
+99: 32   h20       ;
+9A: -32  hE0       ;Darstellung Ziffer 2 mit = Zeichen
+9B: 39   h27       ;
+9C: -32  hE0       ;
+9D: -121 h87       ;
+9E: -32  hE0       ;
+9F: -32  hE0       ;Darstellung Ziffer 3 mit = Zeichen
+A0: 39   h27       ;
+A1: -32  hE0       ;
+A2: 39   h27       ;
+A3: -32  hE0       ;
+A4: -96  hA0       ;Darstellung Ziffer 4 mit = Zeichen
+A5: -89  hA7       ;
+A6: -32  hE0       ;
+A7: 39   h27       ;
+A8: 32   h20       ;
+A9: -32  hE0       ;Darstellung Ziffer 5 mit = Zeichen
+AA: -121 h87       ;
+AB: -32  hE0       ;
+AC: 39   h27       ;
+AD: -32  hE0       ;
+AE: -32  hE0       ;Darstellung Ziffer 6 mit = Zeichen
+AF: -121 h87       ;
+B0: -32  hE0       ;
+B1: -89  hA7       ;
+B2: -32  hE0       ;
+B3: -32  hE0       ;Darstellung Ziffer 7 mit = Zeichen
+B4: 39   h27       ;
+B5: 32   h20       ;
+B6: 39   h27       ;
+B7: 32   h20       ;
+B8: -32  hE0       ;Darstellung Ziffer 8 mit = Zeichen
+B9: -89  hA7       ;
+BA: -32  hE0       ;
+BB: -89  hA7       ;
+BC: -32  hE0       ;
+BD: -32  hE0       ;Darstellung Ziffer 9 mit = Zeichen
+BE: -89  hA7       ;
+BF: -32  hE0       ;
+C0: 39   h27       ;
+C1: -32  hE0       ;
+C2: 0    h00       ;---------------
+C3: 0    h00       ;
+C4: 0    h00       ;
+C5: 0    h00       ;
+C6: 0    h00       ;
+C7: 0    h00       ;
+C8: 0    h00       ;
+C9: 0    h00       ;
+CA: 0    h00       ;
+CB: 0    h00       ;
+CC: 0    h00       ;
+CD: 0    h00       ;
+CE: 0    h00       ;
+CF: 0    h00       ;
+D0: 0    h00       ;
+D1: 0    h00       ;
+D2: 0    h00       ;
+D3: 0    h00       ;
+D4: 0    h00       ;
+D5: 0    h00       ;
+D6: 0    h00       ;
+D7: 0    h00       ;
+D8: 0    h00       ;
+D9: 0    h00       ;
+DA: 0    h00       ;
+DB: 0    h00       ;
+DC: 0    h00       ;
+DD: 0    h00       ;
+DE: 0    h00       ;
+DF: 0    h00       ;
+E0: 0    h00       ;
+E1: 0    h00       ;
+E2: 0    h00       ;
+E3: 0    h00       ;
+E4: 0    h00       ;
+E5: 0    h00       ;
+E6: 0    h00       ;
+E7: 0    h00       ;
+E8: 0    h00       ;
+E9: 0    h00       ;
+EA: 0    h00       ;
+EB: 0    h00       ;
+EC: 0    h00       ;
+ED: 0    h00       ;
+EE: 0    h00       ;
+EF: 0    h00       ;
+F0: 0    h00       ;
+F1: 0    h00       ;
+F2: 0    h00       ;
+F3: 0    h00       ;
+F4: 0    h00       ;
+F5: 0    h00       ;
+F6: 0    h00       ;
+F7: 0    h00       ;
+F8: -32  hE0       ;
+F9: -89  hA7       ;
+FA: -96  hA0       ;
+FB: -89  hA7       ;
+FC: -32  hE0       ;
+FD: 2    h02       ;
+FE: -25  hE7       ;
+FF: 2    h02       ;

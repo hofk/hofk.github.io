@@ -1,0 +1,7 @@
+HC680 Assembler    ;Test MUL
+00: ST             ; Startadr.
+Adr Mnm _Op_ _Op_  ;  - Kommentar -
+00: INP .D0.       ;
+01: INP .D1.       ;
+02: MUL            ;
+03: STP            ;
