@@ -17,7 +17,9 @@ own examples    | discourse example collection
 
 ### Simulation HC680 Processor ###
 
-CPU Simulation (de) | Sourcecode
+in progress !
+
+CPU Simulation (DE) | Sourcecode
 ------------------- | ------------------  
 [hofk.github.io/cpusimulation/](https://hofk.github.io/cpusimulation/) |  [sourcecode/](https://hofk.github.io/cpusimulation/sourcecode)
 ![kopf](2_Kopf.jpg) | [zip file](https://hofk.github.io/cpusimulation/sourcecode/HC680_assembler.zip)
@@ -28,3 +30,13 @@ CPU Simulation (de) | Sourcecode
 
 ...
 
+CPU simulation (EN) | sourcecode
+------------------- | ------------------  
+[hofk.github.io/cpusimulation/](https://hofk.github.io/cpusimulation/) |  [sourcecode/](https://hofk.github.io/cpusimulation/sourcecode)
+![kopf](2_Kopf.jpg) | [zip file](https://hofk.github.io/cpusimulation/sourcecode/HC680_assembler.zip)
+
+[Windows:  simulation_hc680.exe.zip](https://hofk.github.io/cpusimulation/cpu_simulation_8Bit/simulation_hc680.exe.zip)
+
+![HC680](HC680.png)
+
+...
