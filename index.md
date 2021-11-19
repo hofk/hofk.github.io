@@ -1,8 +1,3 @@
-
-## main page ##
-
----
-
 ### three.js ###
 
 own examples    | discourse example collection 
