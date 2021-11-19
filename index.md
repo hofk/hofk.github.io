@@ -23,4 +23,9 @@ see https://cpusimulation.hofk.de/  Windows and web variant
 ![2021-10-21 10 35 12](https://user-images.githubusercontent.com/27998882/138241832-a0b73f0c-05ae-448f-b0c2-2f0f49f5f5fc.png) | ![quicksortEN](https://user-images.githubusercontent.com/27998882/138240854-581fc4df-a9d2-4cb9-9046-020561e9c7c4.png) | https://github.com/hofk/hofk.github.io/tree/master/resourcesEN  |
 
 
-web variant (english) see https://cpusimulation.hofk.de/web/
+......................................................................................................................................................................................................................
+
+web variant ![2021-10-21 10 35 12](https://user-images.githubusercontent.com/27998882/138241832-a0b73f0c-05ae-448f-b0c2-2f0f49f5f5fc.png) see https://cpusimulation.hofk.de/web/
+
+
+source https://github.com/hofk/hofk.github.io/blob/master/CPU-Simulation-8Bit%20web
