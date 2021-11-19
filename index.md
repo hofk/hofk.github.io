@@ -1,7 +1,5 @@
 ## main page ##
 
-*under construction*
-
 ---
 
 ### three.js ###
@@ -17,7 +15,7 @@ own examples    | discourse example collection
 
 ### Simulation HC680 Processor ###
 
-see https://cpusimulation.hofk.de/
+see https://cpusimulation.hofk.de/  Windows and web variant
 
  . | CPU Simulation 8 bit  ( Windows )  |  Program - Sourcecode          |   
 ---|-------------------|---------------------------------------------------------------- |
